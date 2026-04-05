@@ -1,0 +1,473 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--navy:#0a0e1a;
+--navy2:#111827;
+--navy3:#1a2235;
+--card:#151d2e;
+--card2:#1e2a40;
+--border:rgba(255,255,255,0.08);
+--border2:rgba(255,255,255,0.14);
+--g-blue:#4285F4;
+--g-red:#EA4335;
+--g-yellow:#FBBC04;
+--g-green:#34A853;
+--t1:#ffffff;
+--t2:rgba(255,255,255,0.65);
+--t3:rgba(255,255,255,0.38);
+}
+.sg{font-family:'Google Sans',system-ui,sans-serif;background:var(--navy);color:var(--t1);min-height:100vh;display:grid;grid-template-columns:220px 1fr;grid-template-rows:60px 1fr}
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(10,14,26,0.95);border-bottom:1px solid var(--border);position:relative;z-index:20}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-orbs{display:flex;gap:3px;align-items:center}
+.orb{border-radius:50%}
+.orb-b{width:11px;height:11px;background:var(--g-blue);box-shadow:0 0 8px #4285F480}
+.orb-r{width:9px;height:9px;background:var(--g-red);box-shadow:0 0 8px #EA433580}
+.orb-y{width:7px;height:7px;background:var(--g-yellow);box-shadow:0 0 6px #FBBC0480}
+.orb-g{width:9px;height:9px;background:var(--g-green);box-shadow:0 0 8px #34A85380}
+.logo-text{font-size:16px;font-weight:600;letter-spacing:-.3px;color:#fff}
+.logo-text span{background:linear-gradient(90deg,#4285F4,#EA4335,#FBBC04,#34A853);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.topbar-pills{display:flex;gap:8px;align-items:center}
+.pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid}
+.pill-red{background:rgba(234,67,53,0.15);color:#FF6B5B;border-color:rgba(234,67,53,0.3)}
+.pill-yellow{background:rgba(251,188,4,0.15);color:#FDD663;border-color:rgba(251,188,4,0.3)}
+.pill-green{background:rgba(52,168,83,0.15);color:#5BB974;border-color:rgba(52,168,83,0.3)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#34A853;box-shadow:0 0 6px #34A853;animation:blink 2s ease-in-out infinite;display:inline-block;margin-right:5px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#4285F4,#34A853);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;border:2px solid rgba(255,255,255,0.15)}
+.sidebar{background:rgba(10,14,26,0.8);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;gap:2px}
+.ns{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;padding:14px 20px 5px}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;color:var(--t2);cursor:pointer;border-radius:0;transition:all .15s;position:relative}
+.ni:hover{color:#fff;background:rgba(255,255,255,0.05)}
+.ni.active{color:#fff;background:rgba(66,133,244,0.15)}
+.ni.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#4285F4,#34A853);border-radius:0 2px 2px 0}
+.ni svg{width:16px;height:16px;opacity:.7;flex-shrink:0}
+.ni.active svg{opacity:1}
+.nbadge{margin-left:auto;background:#EA4335;color:#fff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px}
+.main{padding:20px;display:flex;flex-direction:column;gap:16px;background:var(--navy)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:-20px;right:-20px;width:60px;height:60px;border-radius:50%;opacity:.15}
+.sc-blue::before{background:#4285F4}
+.sc-red::before{background:#EA4335}
+.sc-yellow::before{background:#FBBC04}
+.sc-green::before{background:#34A853}
+.sc-label{font-size:11px;color:var(--t3);font-weight:500;letter-spacing:.4px;margin-bottom:7px}
+.sc-val{font-size:26px;font-weight:600;line-height:1}
+.sc-sub{font-size:11px;color:var(--t3);margin-top:5px}
+.up{color:#5BB974}.dn{color:#FF6B5B}
+.grid2{display:grid;grid-template-columns:1fr 340px;gap:16px}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.pt{font-size:13px;font-weight:600;color:#fff}
+.pa{font-size:11px;color:#4285F4;cursor:pointer;font-weight:500}
+.map-area{height:300px;background:linear-gradient(160deg,#0d1b2e 0%,#0a1a30 50%,#0d2040 100%);position:relative;overflow:hidden}
+.map-svg{position:absolute;inset:0;width:100%;height:100%}
+.glow-pulse{animation:glow 2.5s ease-in-out infinite}
+@keyframes glow{0%,100%{opacity:1}50%{opacity:.5}}
+.route-anim{stroke-dasharray:5,4;animation:dash 6s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-100}}
+.map-legend{position:absolute;bottom:12px;left:12px;background:rgba(10,14,26,0.85);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:8px 14px;display:flex;gap:14px}
+.li{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,.7);font-weight:500}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.mctrl{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:4px}
+.mb{width:30px;height:30px;background:rgba(10,14,26,0.8);border:1px solid rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;font-weight:600;color:#fff}
+.ship-tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto}
+.st{padding:9px 15px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.st.active{color:#4285F4;border-bottom-color:#4285F4}
+.st:hover:not(.active){color:#fff}
+.ship-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}
+.shc{border:1px solid var(--border);border-radius:12px;padding:10px;cursor:pointer;transition:all .2s;background:var(--navy2)}
+.shc:hover{border-color:rgba(66,133,244,0.5);background:rgba(66,133,244,0.08)}
+.shc.sel{border-color:#4285F4;background:rgba(66,133,244,0.12)}
+.sh-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:7px}
+.sh-name{font-size:11px;font-weight:600;color:#fff;line-height:1.3}
+.sh-type{font-size:10px;color:var(--t3);margin-top:1px}
+.sh-risk{font-size:11px;font-weight:600;margin-top:5px}
+.al{display:flex;flex-direction:column}
+.ai{display:flex;align-items:flex-start;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.ai:hover{background:rgba(255,255,255,0.04)}
+.ai:last-child{border-bottom:none}
+.adot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.ab{flex:1;min-width:0}
+.atype{font-size:10px;font-weight:600;letter-spacing:.5px}
+.adesc{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;line-height:1.4}
+.ameta{font-size:10px;color:var(--t3);margin-top:3px}
+.ascore{font-size:14px;font-weight:700;min-width:28px;text-align:right}
+.srch{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.srch input{flex:1;padding:6px 10px;border:1px solid var(--border2);border-radius:8px;font-size:12px;background:var(--navy2);color:#fff}
+.srch input::placeholder{color:var(--t3)}
+.fb{padding:5px 10px;font-size:11px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--t2);cursor:pointer}
+.fb.active{background:rgba(66,133,244,0.2);color:#4285F4;border-color:rgba(66,133,244,0.4)}
+.bgrid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ptable{width:100%;border-collapse:collapse;font-size:12px}
+.ptable th{text-align:left;padding:8px 16px;font-size:10px;font-weight:600;color:var(--t3);letter-spacing:.4px;border-bottom:1px solid var(--border);text-transform:uppercase}
+.ptable td{padding:9px 16px;border-bottom:1px solid var(--border);color:rgba(255,255,255,.85)}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tr:hover td{background:rgba(255,255,255,0.03)}
+.cp{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;border:1px solid}
+.cl{background:rgba(52,168,83,0.15);color:#5BB974;border-color:rgba(52,168,83,0.3)}
+.cm{background:rgba(251,188,4,0.15);color:#FDD663;border-color:rgba(251,188,4,0.3)}
+.ch{background:rgba(234,67,53,0.15);color:#FF6B5B;border-color:rgba(234,67,53,0.3)}
+.cs{background:#EA4335;color:#fff;border-color:#EA4335}
+.rg{padding:12px 16px}
+.rrow{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--navy2)}
+.rports{font-size:12px;font-weight:600;color:#fff;flex:1}
+.gtrack{height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin-top:5px}
+.gfill{height:100%;border-radius:3px}
+.gscore{font-size:14px;font-weight:700;min-width:30px;text-align:right}
+.sfgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 14px}
+.sfc{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--navy2)}
+.sfl{font-size:10px;color:var(--t3);margin-bottom:3px;font-weight:500}
+.sfv{font-size:18px;font-weight:700}
+.sfbar{height:3px;border-radius:2px;margin-top:5px;opacity:.8}
+.aipanel{padding:16px 18px}
+.aichip{display:flex;align-items:center;gap:6px;background:rgba(66,133,244,0.18);color:#82b4fa;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid rgba(66,133,244,0.3);width:fit-content;margin-bottom:12px}
+.airep{font-size:12px;color:rgba(255,255,255,.72);line-height:1.75}
+.airep strong{color:#fff;font-weight:600}
+.aiacts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.aibtn{font-size:11px;padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:500;border:1px solid}
+.aibtn-primary{background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;border-color:transparent}
+.aibtn-sec{background:rgba(255,255,255,0.06);color:rgba(255,255,255,.8);border-color:var(--border2)}
+.aibtn-sec:hover{background:rgba(255,255,255,0.1)}
+</style>
+
+<div class="sg">
+<div class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-orbs">
+      <div class="orb orb-b"></div>
+      <div class="orb orb-r"></div>
+      <div class="orb orb-y"></div>
+      <div class="orb orb-g"></div>
+    </div>
+    <div class="logo-text">Ship<span>Guard</span></div>
+    <span style="font-size:10px;color:var(--t3);margin-left:6px;font-weight:400">Maritime Intelligence v2.0</span>
+  </div>
+  <div class="topbar-pills">
+    <span class="pill pill-red">3 Critical</span>
+    <span class="pill pill-yellow">7 High</span>
+    <span class="pill pill-green"><span class="live-dot"></span>Live</span>
+  </div>
+  <div class="avatar">LM</div>
+</div>
+
+<div class="sidebar">
+  <div class="ns">Monitor</div>
+  <div class="ni active">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+    Dashboard
+  </div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    Live Map
+  </div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+    Alerts
+    <span class="nbadge">10</span>
+  </div>
+  <div class="ns">Optimize</div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z"/></svg>
+    Route Optimizer
+  </div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    Port Status
+  </div>
+  <div class="ns">Intelligence</div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    Fleet Tracker
+  </div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    AI Briefings
+  </div>
+  <div style="margin-top:auto">
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58z"/></svg>
+    Settings
+  </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="stats-row">
+    <div class="sc sc-blue">
+      <div class="sc-label">Active Vessels</div>
+      <div class="sc-val" style="color:#4285F4">1,847</div>
+      <div class="sc-sub"><span class="up">+12</span> in last 5 min</div>
+    </div>
+    <div class="sc sc-red">
+      <div class="sc-label">Critical Alerts</div>
+      <div class="sc-val" style="color:#EA4335">3</div>
+      <div class="sc-sub">2 need immediate reroute</div>
+    </div>
+    <div class="sc sc-yellow">
+      <div class="sc-label">Avg Route Risk</div>
+      <div class="sc-val" style="color:#FBBC04">47</div>
+      <div class="sc-sub"><span class="dn">+5</span> vs yesterday</div>
+    </div>
+    <div class="sc sc-green">
+      <div class="sc-label">Ports Monitored</div>
+      <div class="sc-val" style="color:#34A853">50</div>
+      <div class="sc-sub">8 congested today</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="panel">
+        <div class="ph">
+          <span class="pt">Live Vessel Map</span>
+          <div style="display:flex;gap:6px">
+            <span style="font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:8px;cursor:pointer;color:var(--t2)">Weather Layer</span>
+            <span style="font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:8px;cursor:pointer;color:var(--t2)">Shipping Lanes</span>
+          </div>
+        </div>
+        <div class="map-area">
+          <svg class="map-svg" viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="gB" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4285F4" stop-opacity=".35"/><stop offset="100%" stop-color="#4285F4" stop-opacity="0"/></radialGradient>
+              <radialGradient id="gR" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#EA4335" stop-opacity=".4"/><stop offset="100%" stop-color="#EA4335" stop-opacity="0"/></radialGradient>
+              <radialGradient id="gY" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FBBC04" stop-opacity=".35"/><stop offset="100%" stop-color="#FBBC04" stop-opacity="0"/></radialGradient>
+              <radialGradient id="gG" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#34A853" stop-opacity=".35"/><stop offset="100%" stop-color="#34A853" stop-opacity="0"/></radialGradient>
+              <pattern id="dots" width="25" height="25" patternUnits="userSpaceOnUse"><circle cx="12.5" cy="12.5" r=".6" fill="rgba(255,255,255,.12)"/></pattern>
+            </defs>
+            <rect width="700" height="300" fill="#0a1628"/>
+            <rect width="700" height="300" fill="url(#dots)"/>
+            <ellipse cx="115" cy="100" rx="85" ry="50" fill="#1a3a5c" opacity=".5"/>
+            <ellipse cx="575" cy="75" rx="68" ry="44" fill="#1a3a5c" opacity=".5"/>
+            <ellipse cx="345" cy="155" rx="52" ry="28" fill="#1a3a5c" opacity=".45"/>
+            <ellipse cx="595" cy="225" rx="75" ry="46" fill="#1a3a5c" opacity=".5"/>
+            <ellipse cx="75" cy="255" rx="58" ry="36" fill="#1a3a5c" opacity=".5"/>
+            <path d="M 168,115 Q 258,88 348,115 Q 428,136 518,102" stroke="#4285F4" stroke-width="1.5" fill="none" opacity=".5" class="route-anim"/>
+            <path d="M 195,195 Q 308,170 418,182 Q 498,190 558,215" stroke="#4285F4" stroke-width="1.5" fill="none" opacity=".5" class="route-anim" style="animation-delay:-3s"/>
+            <path d="M 148,245 Q 248,215 378,195 Q 468,182 548,158" stroke="#EA4335" stroke-width="2" fill="none" opacity=".6" class="route-anim" style="animation-delay:-1.5s"/>
+            <circle cx="268" cy="102" r="30" fill="url(#gR)" class="glow-pulse"/>
+            <circle cx="472" cy="110" r="28" fill="url(#gR)"/>
+            <circle cx="268" cy="102" r="7" fill="#EA4335" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="472" cy="110" r="8" fill="#EA4335" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="168" cy="115" r="18" fill="url(#gB)"/>
+            <circle cx="168" cy="115" r="5" fill="#4285F4" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="378" cy="116" r="5" fill="#4285F4" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="308" cy="182" r="5" fill="#34A853" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="418" cy="189" r="5" fill="#4285F4" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="518" cy="172" r="20" fill="url(#gY)"/>
+            <circle cx="518" cy="172" r="6" fill="#FBBC04" stroke="#fff" stroke-width="1.5" class="glow-pulse"/>
+            <circle cx="198" cy="202" r="5" fill="#34A853" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="378" cy="212" r="20" fill="url(#gY)"/>
+            <circle cx="378" cy="212" r="6" fill="#FBBC04" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="498" cy="222" r="5" fill="#4285F4" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="558" cy="192" r="5" fill="#34A853" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="155" cy="242" r="5" fill="#4285F4" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="288" cy="235" r="18" fill="url(#gY)"/>
+            <circle cx="288" cy="235" r="6" fill="#FBBC04" stroke="#fff" stroke-width="1.5"/>
+            <rect x="238" y="86" width="62" height="20" rx="4" fill="rgba(10,14,26,0.88)" stroke="rgba(234,67,53,0.5)" stroke-width=".8"/>
+            <text x="269" y="100" text-anchor="middle" font-size="9" fill="#FF6B5B" font-weight="600">ALTA MAYA · 81</text>
+            <rect x="442" y="96" width="72" height="20" rx="4" fill="rgba(10,14,26,0.88)" stroke="rgba(234,67,53,0.5)" stroke-width=".8"/>
+            <text x="478" y="110" text-anchor="middle" font-size="9" fill="#FF6B5B" font-weight="600">MSC ELENA · 91</text>
+            <rect x="455" y="178" width="72" height="20" rx="4" fill="rgba(10,14,26,0.88)" stroke="rgba(251,188,4,0.5)" stroke-width=".8"/>
+            <text x="491" y="192" text-anchor="middle" font-size="9" fill="#FDD663" font-weight="600">PACIFIC STAR · 63</text>
+            <rect x="340" y="218" width="72" height="20" rx="4" fill="rgba(10,14,26,0.88)" stroke="rgba(251,188,4,0.5)" stroke-width=".8"/>
+            <text x="376" y="232" text-anchor="middle" font-size="9" fill="#FDD663" font-weight="600">ORION BULK · 67</text>
+            <circle cx="175" cy="115" r="3" fill="#4285F4"/>
+            <text x="180" y="112" font-size="8" fill="#82b4fa" font-weight="500">Shanghai</text>
+            <circle cx="518" cy="100" r="3" fill="#4285F4"/>
+            <text x="500" y="97" font-size="8" fill="#82b4fa" font-weight="500">Rotterdam</text>
+            <circle cx="215" cy="198" r="3" fill="#34A853"/>
+            <text x="220" y="196" font-size="8" fill="#5BB974" font-weight="500">Mumbai</text>
+            <circle cx="155" cy="245" r="3" fill="#4285F4"/>
+            <text x="160" y="243" font-size="8" fill="#82b4fa" font-weight="500">Singapore</text>
+          </svg>
+          <div class="map-legend">
+            <div class="li"><div class="ld" style="background:#EA4335;box-shadow:0 0 5px #EA4335"></div>Critical 80+</div>
+            <div class="li"><div class="ld" style="background:#FBBC04;box-shadow:0 0 5px #FBBC04"></div>High 60–79</div>
+            <div class="li"><div class="ld" style="background:#4285F4;box-shadow:0 0 5px #4285F4"></div>Medium 40–59</div>
+            <div class="li"><div class="ld" style="background:#34A853;box-shadow:0 0 5px #34A853"></div>Low 0–39</div>
+          </div>
+          <div class="mctrl">
+            <div class="mb">+</div>
+            <div class="mb">−</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border)">
+          <div class="ship-tabs" id="shipTabs">
+            <div class="st active" data-f="all">All Types</div>
+            <div class="st" data-f="container">Container</div>
+            <div class="st" data-f="tanker">Tanker</div>
+            <div class="st" data-f="bulk">Bulk Carrier</div>
+            <div class="st" data-f="roro">Ro-Ro</div>
+            <div class="st" data-f="lng">LNG / LPG</div>
+            <div class="st" data-f="general">General</div>
+          </div>
+          <div class="ship-grid" id="shipGrid"></div>
+        </div>
+      </div>
+
+      <div class="bgrid2">
+        <div class="panel">
+          <div class="ph"><span class="pt">Port Status — Top 10</span><span class="pa">View all 50</span></div>
+          <table class="ptable">
+            <thead><tr><th>Port</th><th>Region</th><th>Status</th><th style="text-align:right">Ships</th></tr></thead>
+            <tbody id="portTable"></tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="ph"><span class="pt">Route Risk Scores</span><span class="pa">All routes</span></div>
+          <div class="rg" id="routeRisks"></div>
+          <div class="sfgrid">
+            <div class="sfc"><div class="sfl">Weather</div><div class="sfv" style="color:#EA4335">78</div><div class="sfbar" style="width:78%;background:#EA4335"></div></div>
+            <div class="sfc"><div class="sfl">Port Congestion</div><div class="sfv" style="color:#FBBC04">61</div><div class="sfbar" style="width:61%;background:#FBBC04"></div></div>
+            <div class="sfc"><div class="sfl">Vessel Anomaly</div><div class="sfv" style="color:#FBBC04">44</div><div class="sfbar" style="width:44%;background:#FBBC04"></div></div>
+            <div class="sfc"><div class="sfl">News Sentiment</div><div class="sfv" style="color:#34A853">22</div><div class="sfbar" style="width:22%;background:#34A853"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="panel">
+        <div class="ph"><span class="pt">Active Alerts</span><span class="pa">Mark all read</span></div>
+        <div class="srch">
+          <input type="text" placeholder="Search alerts..."/>
+          <button class="fb active">All</button>
+          <button class="fb">Critical</button>
+        </div>
+        <div class="al" id="alertList"></div>
+      </div>
+      <div class="panel">
+        <div class="ph">
+          <div class="aichip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            AI Briefing — Claude
+          </div>
+          <span class="pa">Regenerate</span>
+        </div>
+        <div class="aipanel">
+          <div class="airep">
+            <strong>Daily Maritime Risk Summary — April 3, 2026</strong><br><br>
+            <strong style="color:#EA4335">High priority:</strong> Tropical storm in the Arabian Sea elevates risk on India–Europe corridors. Wave heights 4.2–5.8m along 12 waypoints; 3 vessels flagged for anomalous speed reduction.<br><br>
+            <strong style="color:#FBBC04">Port watch:</strong> Shanghai congestion remains Severe following berth maintenance at Yangshan Phase IV. ETA delays averaging 18–22h expected through April 6.<br><br>
+            <strong style="color:#34A853">Recommended:</strong> Consider Cape of Good Hope diversion for MSC Elena &amp; Alta Maya — sustained Houthi threat activity in Red Sea corridor (score 91).
+          </div>
+          <div class="aiacts">
+            <button class="aibtn aibtn-primary" onclick="sendPrompt('Is the Red Sea safe this week? What is the current risk score for the Suez–Red Sea corridor and what alternative routes does ShipGuard recommend?')">Ask AI ↗</button>
+            <button class="aibtn aibtn-sec">Export PDF</button>
+            <button class="aibtn aibtn-sec">Email Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const shipTypes=[
+  {type:'container',label:'Container',color:'#4285F4',bg:'rgba(66,133,244,0.18)',vessels:['MSC Elena','OOCL Pioneer','Evergreen Jade','CMA Titan','Maersk Oslo','HMM Korea'],risks:[91,42,28,65,38,71],path:'M20 21H4l2-5h12l2 5zM12 3L6.5 9H9v5h6V9h2.5L12 3z'},
+  {type:'tanker',label:'Oil Tanker',color:'#EA4335',bg:'rgba(234,67,53,0.18)',vessels:['Alta Maya','Gulf Voyager','Crude Pioneer','VLCC Athena'],risks:[81,55,47,33],path:'M3 17l2-7h14l2 7H3zm5-9V5h8v3H8z'},
+  {type:'bulk',label:'Bulk Carrier',color:'#FBBC04',bg:'rgba(251,188,4,0.18)',vessels:['Orion Bulk','Pacific Star','Capesize Atlas','Panamax Quest'],risks:[67,63,41,29],path:'M3 17l2-7h14l2 7H3zm5-9V5h8v3H8z'},
+  {type:'roro',label:'Ro-Ro',color:'#a142f4',bg:'rgba(161,66,244,0.18)',vessels:['Auto Carrier Nova','Wallenius Titan'],risks:[31,22],path:'M20 8H4l-2 8v2h20v-2L20 8zm-8 6H6v-4h6v4zm8 0h-6v-4h6v4z'},
+  {type:'lng',label:'LNG/LPG',color:'#34A853',bg:'rgba(52,168,83,0.18)',vessels:['Q-Flex Aurora','LNG Horizon','LPG Ariel'],risks:[44,38,26],path:'M12 2l3 5h3l1 5H5l1-5h3L12 2zm-3 10v5h6v-5H9z'},
+  {type:'general',label:'General',color:'#fa7b17',bg:'rgba(250,123,23,0.18)',vessels:['MPP Endeavour','Reefer Star','Breakbulk King'],risks:[24,19,31],path:'M20 21H4l2-5h12l2 5zM5 14l2-5h10l2 5H5z'},
+];
+
+function riskColor(r){return r>=80?'#EA4335':r>=60?'#FBBC04':r>=40?'#4285F4':'#34A853'}
+
+function renderShips(filter){
+  const grid=document.getElementById('shipGrid');
+  let all=[];
+  if(!filter||filter==='all'){
+    shipTypes.forEach(g=>g.vessels.forEach((v,i)=>all.push({name:v,type:g.label,color:g.color,bg:g.bg,risk:g.risks[i],path:g.path})));
+  } else {
+    const grp=shipTypes.find(g=>g.type===filter);
+    if(grp) grp.vessels.forEach((v,i)=>all.push({name:v,type:grp.label,color:grp.color,bg:grp.bg,risk:grp.risks[i],path:grp.path}));
+  }
+  all=all.slice(0,12);
+  grid.innerHTML=all.map((s,i)=>{
+    const rc=riskColor(s.risk);
+    return `<div class="shc" onclick="this.classList.toggle('sel')">
+      <div class="sh-icon" style="background:${s.bg}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="${s.color}"><path d="${s.path}"/></svg>
+      </div>
+      <div class="sh-name">${s.name}</div>
+      <div class="sh-type">${s.type}</div>
+      <div class="sh-risk" style="color:${rc}">Risk: ${s.risk}</div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('shipTabs').addEventListener('click',e=>{
+  const tab=e.target.closest('.st');
+  if(!tab) return;
+  document.querySelectorAll('.st').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  renderShips(tab.dataset.f);
+});
+renderShips('all');
+
+const alerts=[
+  {sev:5,color:'#EA4335',type:'WEATHER',desc:'Cyclone forming — Arabian Sea corridors severely affected',region:'Arabian Sea',score:91,age:'2m ago'},
+  {sev:5,color:'#EA4335',type:'PIRACY',desc:'MSC Elena & Alta Maya: Houthi threat — Red Sea immediate alert',region:'Red Sea / Bab-el-Mandeb',score:88,age:'8m ago'},
+  {sev:4,color:'#FBBC04',type:'CONGESTION',desc:'Shanghai port reaching Severe — 18h+ berth delay expected',region:'Shanghai, China',score:82,age:'15m ago'},
+  {sev:4,color:'#FBBC04',type:'ANOMALY',desc:'Pacific Star: 40% speed deviation, 34° off expected bearing',region:'Indian Ocean',score:74,age:'22m ago'},
+  {sev:3,color:'#FBBC04',type:'CONGESTION',desc:'Rotterdam berths 7–9 closed for scheduled maintenance',region:'Rotterdam, Netherlands',score:65,age:'1h ago'},
+  {sev:3,color:'#4285F4',type:'NEWS',desc:'Suez Canal fee increase announced — route cost model updated',region:'Egypt / Suez Canal',score:61,age:'2h ago'},
+  {sev:2,color:'#4285F4',type:'WEATHER',desc:'Strong swell forecast Bay of Biscay — monitor passage timing',region:'Atlantic / Bay of Biscay',score:52,age:'3h ago'},
+  {sev:1,color:'#34A853',type:'PORT',desc:'Singapore additional berths opened — congestion easing',region:'Singapore',score:28,age:'4h ago'},
+];
+
+document.getElementById('alertList').innerHTML=alerts.map(a=>`
+<div class="ai">
+  <div class="adot" style="background:${a.color};box-shadow:0 0 6px ${a.color}80"></div>
+  <div class="ab">
+    <div class="atype" style="color:${a.color}">${a.type} — SEV ${a.sev}</div>
+    <div class="adesc">${a.desc}</div>
+    <div class="ameta">${a.region} · ${a.age}</div>
+  </div>
+  <div class="ascore" style="color:${a.color}">${a.score}</div>
+</div>`).join('');
+
+const ports=[
+  {name:'Shanghai',region:'Asia-Pacific',cong:'Severe',ships:312},
+  {name:'Singapore',region:'Asia-Pacific',cong:'High',ships:198},
+  {name:'Rotterdam',region:'Europe',cong:'High',ships:176},
+  {name:'Los Angeles',region:'Americas',cong:'Medium',ships:134},
+  {name:'Dubai',region:'Middle East',cong:'Medium',ships:88},
+  {name:'Hamburg',region:'Europe',cong:'Low',ships:62},
+  {name:'Mumbai',region:'South Asia',cong:'Medium',ships:71},
+  {name:'Busan',region:'Asia-Pacific',cong:'Low',ships:45},
+  {name:'Antwerp',region:'Europe',cong:'Low',ships:38},
+  {name:'New York',region:'Americas',cong:'Low',ships:29},
+];
+const cls={Severe:'cs',High:'ch',Medium:'cm',Low:'cl'};
+document.getElementById('portTable').innerHTML=ports.map(p=>`
+<tr>
+  <td style="font-weight:600">${p.name}</td>
+  <td style="color:var(--t3)">${p.region}</td>
+  <td><span class="cp ${cls[p.cong]}">${p.cong}</span></td>
+  <td style="font-weight:600;text-align:right">${p.ships}</td>
+</tr>`).join('');
+
+const routes=[
+  {from:'Shanghai',to:'Rotterdam',risk:77},
+  {from:'Mumbai',to:'Hamburg',risk:91},
+  {from:'Singapore',to:'LA',risk:44},
+  {from:'Dubai',to:'New York',risk:62},
+  {from:'Busan',to:'Seattle',risk:31},
+];
+document.getElementById('routeRisks').innerHTML=routes.map(r=>{
+  const c=riskColor(r.risk);
+  return `<div class="rrow">
+    <div style="flex:1">
+      <div class="rports">${r.from} → ${r.to}</div>
+      <div class="gtrack"><div class="gfill" style="width:${r.risk}%;background:${c}"></div></div>
+    </div>
+    <div class="gscore" style="color:${c}">${r.risk}</div>
+  </div>`;
+}).join('');
+</script>
