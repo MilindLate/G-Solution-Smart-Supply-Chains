@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShipGuard — Maritime Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g-blue:#4285f4;--g-red:#ea4335;--g-yellow:#fbbc04;--g-green:#34a853;
+  --g-blue-l:#e8f0fe;--g-red-l:#fce8e6;--g-yellow-l:#fef7e0;--g-green-l:#e6f4ea;
+  --g-blue-m:#d2e3fc;--g-red-m:#f5c6c3;--g-yellow-m:#fdedc4;--g-green-m:#ceead6;
+  --page:#f8f9fa;--surface:#ffffff;--surface2:#f1f3f4;--surface3:#e8eaed;
+  --border:#e0e0e0;--border2:#dadce0;
+  --t1:#202124;--t2:#5f6368;--t3:#9aa0a6;--t4:#bdc1c6;
+  --shadow-xs:0 1px 2px rgba(60,64,67,.1);
+  --shadow-sm:0 1px 3px rgba(60,64,67,.12),0 1px 2px rgba(60,64,67,.08);
+  --shadow-md:0 4px 12px rgba(60,64,67,.12),0 2px 6px rgba(60,64,67,.08);
+  --shadow-lg:0 8px 24px rgba(60,64,67,.14),0 4px 8px rgba(60,64,67,.1);
+  --r:12px;--r-lg:16px;
+}
+body{font-family:'Google Sans',system-ui,sans-serif;background:var(--page);color:var(--t1);min-height:100vh;display:grid;grid-template-columns:252px 1fr;grid-template-rows:4px 60px 1fr;line-height:1.45}
+
+/* CHROME BAR */
+.chrome-bar{grid-column:1/-1;background:linear-gradient(90deg,var(--g-blue) 25%,var(--g-red) 25% 50%,var(--g-yellow) 50% 75%,var(--g-green) 75%)}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:0;padding:0 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:4px;z-index:100;box-shadow:var(--shadow-sm)}
+.logo-wrap{display:flex;align-items:center;gap:12px;min-width:220px;padding-right:16px;border-right:1px solid var(--border);margin-right:20px}
+.logo-orbs{display:flex;gap:5px;align-items:center}
+.orb{border-radius:50%;flex-shrink:0;transition:transform .2s}
+.orb:hover{transform:scale(1.3)}
+.orb-b{width:13px;height:13px;background:var(--g-blue)}
+.orb-r{width:11px;height:11px;background:var(--g-red)}
+.orb-y{width:9px;height:9px;background:var(--g-yellow)}
+.orb-g{width:11px;height:11px;background:var(--g-green)}
+.logo-name{font-size:17px;font-weight:700;letter-spacing:-.4px}
+.logo-name span{background:linear-gradient(90deg,#4285f4 0%,#ea4335 33%,#fbbc04 66%,#34a853 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-tag{font-size:10px;color:var(--t3);font-weight:400;margin-top:1px}
+
+.search-box{flex:1;position:relative;max-width:500px}
+.search-box svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3)}
+.search-box input{width:100%;padding:9px 16px 9px 42px;border:1.5px solid var(--border2);border-radius:24px;font:13px/1 'Google Sans',sans-serif;background:var(--surface2);color:var(--t1);outline:none;transition:all .2s}
+.search-box input:focus{background:#fff;border-color:var(--g-blue);box-shadow:0 0 0 3px rgba(66,133,244,.14)}
+.search-box input::placeholder{color:var(--t3)}
+
+.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.tp{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid;user-select:none}
+.tp-red{background:var(--g-red-l);color:#c5221f;border-color:var(--g-red-m)}
+.tp-red:hover{background:var(--g-red-m)}
+.tp-yellow{background:var(--g-yellow-l);color:#b06000;border-color:var(--g-yellow-m)}
+.tp-yellow:hover{background:var(--g-yellow-m)}
+.tp-green{background:var(--g-green-l);color:#137333;border-color:var(--g-green-m)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--g-green);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.tdiv{width:1px;height:22px;background:var(--border);margin:0 4px}
+.ico-btn{width:36px;height:36px;border-radius:50%;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);transition:all .15s}
+.ico-btn:hover{background:var(--surface2);color:var(--t1)}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--g-blue),var(--g-green));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;cursor:pointer;border:2px solid var(--border);flex-shrink:0}
+
+/* SIDEBAR */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:12px 8px;display:flex;flex-direction:column;gap:1px;position:sticky;top:68px;height:calc(100vh - 68px);overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:0}
+.ns{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;padding:14px 12px 5px}
+.ni{display:flex;align-items:center;gap:12px;padding:9px 12px;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;border-radius:8px;transition:all .15s;position:relative}
+.ni:hover{color:var(--t1);background:var(--surface2)}
+.ni.active{color:var(--g-blue);background:var(--g-blue-l);font-weight:600}
+.ni svg{width:18px;height:18px;flex-shrink:0}
+.nbadge{margin-left:auto;background:var(--g-red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:20px;text-align:center}
+.sid-footer{margin-top:auto;padding-top:8px;border-top:1px solid var(--border)}
+
+/* MAIN */
+.main{padding:20px;display:flex;flex-direction:column;gap:16px}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s;cursor:default}
+.sc:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r-lg) var(--r-lg) 0 0}
+.sc-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.sc-lbl{font-size:11px;color:var(--t2);font-weight:500;letter-spacing:.1px}
+.sc-val{font-size:30px;font-weight:700;line-height:1;margin:4px 0 6px}
+.sc-foot{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t3)}
+.delta{font-size:11px;font-weight:600;padding:1px 6px;border-radius:6px}
+.d-up{color:#137333;background:var(--g-green-l)}
+.d-dn{color:#c5221f;background:var(--g-red-l)}
+.d-warn{color:#b06000;background:var(--g-yellow-l)}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 364px;gap:16px;align-items:start}
+.bgrid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* PANEL */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-xs)}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border)}
+.pt{font-size:13px;font-weight:600;color:var(--t1);display:flex;align-items:center;gap:8px}
+.pt-ico{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pa{font-size:12px;color:var(--g-blue);cursor:pointer;font-weight:500;padding:4px 10px;border-radius:8px;transition:background .15s;display:flex;align-items:center;gap:4px}
+.pa:hover{background:var(--g-blue-l)}
+.pa-grey{font-size:11px;color:var(--t3);cursor:default}
+
+/* MAP */
+.map-wrap{position:relative;height:320px;overflow:hidden;background:linear-gradient(160deg,#dbeafe 0%,#bfdbfe 60%,#93c5fd 100%)}
+.map-svg{position:absolute;inset:0;width:100%;height:100%}
+.route-anim{stroke-dasharray:7,5;animation:dash 8s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-144}}
+@keyframes pulse-r{0%{r:10;opacity:.9}80%{r:26;opacity:0}100%{r:10;opacity:0}}
+.pulse{animation:pulse-r 2.8s ease-out infinite}
+
+.map-legend{position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,.92);border:1px solid var(--border);border-radius:10px;padding:9px 14px;display:flex;gap:14px;backdrop-filter:blur(6px);box-shadow:var(--shadow-sm)}
+.li{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2);font-weight:600}
+.ld{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.mctrl{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:4px}
+.mb{width:32px;height:32px;background:rgba(255,255,255,.92);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;font-weight:600;color:var(--t1);transition:all .15s;box-shadow:var(--shadow-xs)}
+.mb:hover{box-shadow:var(--shadow-sm);background:#fff}
+.map-layers{position:absolute;top:12px;left:12px;display:flex;gap:5px}
+.mlayer{padding:4px 11px;border-radius:20px;font-size:10px;font-weight:600;background:rgba(255,255,255,.88);border:1px solid var(--border);color:var(--t2);cursor:pointer;transition:all .2s;backdrop-filter:blur(4px)}
+.mlayer:hover{background:#fff}
+.mlayer.on{background:var(--g-blue);color:#fff;border-color:var(--g-blue)}
+
+/* SHIP TABS */
+.ship-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 4px;overflow-x:auto}
+.ship-tabs::-webkit-scrollbar{height:0}
+.st{padding:10px 14px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:all .15s;border-radius:0}
+.st:hover:not(.active){color:var(--t1);background:var(--surface2)}
+.st.active{color:var(--g-blue);border-bottom-color:var(--g-blue);font-weight:600}
+.ship-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}
+.shc{border:1px solid var(--border);border-radius:var(--r);padding:12px;cursor:pointer;transition:all .2s;background:var(--page)}
+.shc:hover{border-color:var(--border2);background:var(--surface2);box-shadow:var(--shadow-sm);transform:translateY(-1px)}
+.shc.sel{border-color:var(--g-blue);background:var(--g-blue-l);box-shadow:0 0 0 1.5px var(--g-blue)}
+.sh-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.sh-name{font-size:11px;font-weight:700;color:var(--t1);line-height:1.3}
+.sh-type{font-size:10px;color:var(--t3);margin-top:1px}
+.sh-risk{font-size:11px;font-weight:700;margin-top:7px;display:flex;align-items:center;gap:4px}
+.rpip{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* ALERTS */
+.srch{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center}
+.si{position:relative;flex:1}
+.si svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--t3)}
+.si input{width:100%;padding:6px 10px 6px 30px;border:1.5px solid var(--border2);border-radius:8px;font:12px/1 'Google Sans',sans-serif;background:var(--surface2);color:var(--t1);outline:none;transition:all .15s}
+.si input:focus{background:#fff;border-color:var(--g-blue)}
+.si input::placeholder{color:var(--t3)}
+.fb{padding:5px 12px;font-size:11px;border:1.5px solid var(--border2);border-radius:20px;background:transparent;color:var(--t2);cursor:pointer;font-family:'Google Sans',sans-serif;font-weight:500;transition:all .15s;white-space:nowrap}
+.fb:hover{background:var(--surface2)}
+.fb.on{background:var(--g-blue);color:#fff;border-color:var(--g-blue)}
+
+.al-list{display:flex;flex-direction:column;max-height:380px;overflow-y:auto}
+.al-list::-webkit-scrollbar{width:4px}
+.al-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.ai{display:flex;align-items:flex-start;gap:11px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;position:relative}
+.ai:hover{background:var(--surface2)}
+.ai:last-child{border-bottom:none}
+.ai.unread{background:rgba(66,133,244,.03)}
+.ai.unread::before{content:'';position:absolute;left:5px;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--g-blue)}
+.adot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.ab{flex:1;min-width:0}
+.at-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.atype{font-size:10px;font-weight:800;letter-spacing:.5px}
+.achip{font-size:9px;font-weight:700;padding:1px 7px;border-radius:6px;border:1px solid}
+.adesc{font-size:12px;color:var(--t1);line-height:1.45}
+.ameta{font-size:10px;color:var(--t3);margin-top:3px}
+.ascore{font-size:15px;font-weight:800;min-width:30px;text-align:right;font-variant-numeric:tabular-nums}
+.empty{padding:28px 16px;text-align:center;color:var(--t3);font-size:13px}
+
+/* PORT TABLE */
+.ptable{width:100%;border-collapse:collapse;font-size:12px}
+.ptable th{text-align:left;padding:9px 16px;font-size:10px;font-weight:700;color:var(--t3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.5px;background:var(--page)}
+.ptable td{padding:9px 16px;border-bottom:1px solid var(--border);color:var(--t1)}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tr:hover td{background:var(--surface2)}
+.ptable td:first-child{font-weight:600}
+.cp{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid}
+.cl{background:var(--g-green-l);color:#137333;border-color:var(--g-green-m)}
+.cm{background:var(--g-yellow-l);color:#b06000;border-color:var(--g-yellow-m)}
+.ch{background:var(--g-red-l);color:#c5221f;border-color:var(--g-red-m)}
+.cs{background:var(--g-red);color:#fff;border-color:var(--g-red)}
+
+/* ROUTES */
+.rg{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.rrow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--page);cursor:pointer;transition:all .15s}
+.rrow:hover{border-color:var(--border2);background:var(--surface2);box-shadow:var(--shadow-sm)}
+.rp{font-size:12px;font-weight:600;color:var(--t1)}
+.rsub{font-size:10px;color:var(--t3);margin-top:2px}
+.gtrack{height:4px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:7px}
+.gfill{height:100%;border-radius:3px}
+.gscore{font-size:15px;font-weight:800;min-width:30px;text-align:right;font-variant-numeric:tabular-nums}
+.glab{font-size:9px;color:var(--t3);text-align:right;margin-top:2px}
+
+/* RISK FACTORS */
+.rfgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 14px}
+.rfc{border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--page);transition:all .15s;cursor:default}
+.rfc:hover{background:var(--surface2)}
+.rfl{font-size:10px;color:var(--t2);margin-bottom:4px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.rfv{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.rfbar{height:3px;border-radius:2px;margin-top:7px;max-width:100%}
+
+/* AI PANEL */
+.ai-panel{padding:16px 18px}
+.ai-chip{display:inline-flex;align-items:center;gap:6px;background:var(--g-blue-l);color:var(--g-blue);font-size:11px;font-weight:700;padding:5px 13px;border-radius:20px;border:1px solid rgba(66,133,244,.2);margin-bottom:14px}
+.ai-rep{font-size:13px;color:var(--t2);line-height:1.8}
+.ai-rep strong{color:var(--t1);font-weight:700}
+.hi-r{color:#c5221f;font-weight:700}
+.hi-y{color:#b06000;font-weight:700}
+.hi-g{color:#137333;font-weight:700}
+.ai-acts{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.aibtn{font-size:12px;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:600;border:1.5px solid;font-family:'Google Sans',sans-serif;transition:all .2s}
+.aibtn-p{background:var(--g-blue);color:#fff;border-color:var(--g-blue)}
+.aibtn-p:hover{background:#2b76f5;box-shadow:0 2px 8px rgba(66,133,244,.35)}
+.aibtn-s{background:var(--surface);color:var(--t2);border-color:var(--border2)}
+.aibtn-s:hover{background:var(--surface2);color:var(--t1)}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--t4)}
+</style>
+</head>
+<body>
+
+<div class="chrome-bar"></div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-orbs">
+      <div class="orb orb-b"></div>
+      <div class="orb orb-r"></div>
+      <div class="orb orb-y"></div>
+      <div class="orb orb-g"></div>
+    </div>
+    <div>
+      <div class="logo-name">Ship<span>Guard</span></div>
+      <div class="logo-tag">Maritime Intelligence v2.0</div>
+    </div>
+  </div>
+
+  <div class="search-box">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    <input type="text" placeholder="Search vessels, ports, routes, alerts…" id="gSearch"/>
+  </div>
+
+  <div class="topbar-right">
+    <div class="tp tp-red">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+      3 Critical
+    </div>
+    <div class="tp tp-yellow">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      7 High
+    </div>
+    <div class="tp tp-green">
+      <div class="live-dot"></div>
+      Live · 5m
+    </div>
+    <div class="tdiv"></div>
+    <button class="ico-btn" title="Notifications">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+    </button>
+    <div class="avatar">LM</div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="ns">Monitor</div>
+  <div class="ni active">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+    Dashboard
+  </div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    Live Map
+  </div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+    Alerts <span class="nbadge">10</span>
+  </div>
+
+  <div class="ns">Optimize</div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z"/></svg>
+    Route Optimizer
+  </div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    Port Status
+  </div>
+
+  <div class="ns">Intelligence</div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    Fleet Tracker
+  </div>
+  <div class="ni">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    AI Briefings
+  </div>
+
+  <div class="sid-footer">
+    <div class="ni">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58z"/></svg>
+    Settings
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--g-blue)"></div>
+      <div class="sc-ico" style="background:var(--g-blue-l)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#4285f4"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 15.96.5 13.5.5c-1.3 0-2.43.56-3.25 1.44L9 3.27 7.75 1.94C6.93 1.06 5.8.5 4.5.5 2.04.5 0 2.54 0 4.66c0 .46.08.9.18 1.34H0v13h20V6z"/></svg>
+      </div>
+      <div class="sc-lbl">Active Vessels</div>
+      <div class="sc-val" style="color:var(--g-blue)">1,847</div>
+      <div class="sc-foot"><span class="delta d-up">+12</span> in last 5 min</div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--g-red)"></div>
+      <div class="sc-ico" style="background:var(--g-red-l)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#ea4335"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+      </div>
+      <div class="sc-lbl">Critical Alerts</div>
+      <div class="sc-val" style="color:var(--g-red)">3</div>
+      <div class="sc-foot"><span class="delta d-dn">2 need reroute</span></div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--g-yellow)"></div>
+      <div class="sc-ico" style="background:var(--g-yellow-l)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#fbbc04"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+      </div>
+      <div class="sc-lbl">Avg Route Risk</div>
+      <div class="sc-val" style="color:#b06000">47</div>
+      <div class="sc-foot"><span class="delta d-warn">+5 vs yesterday</span></div>
+    </div>
+    <div class="sc">
+      <div class="sc-bar" style="background:var(--g-green)"></div>
+      <div class="sc-ico" style="background:var(--g-green-l)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#34a853"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      </div>
+      <div class="sc-lbl">Ports Monitored</div>
+      <div class="sc-val" style="color:var(--g-green)">50</div>
+      <div class="sc-foot"><span class="delta d-warn">8 congested</span></div>
+    </div>
+  </div>
+
+  <!-- MAIN 2-COL -->
+  <div class="grid2">
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- MAP -->
+      <div class="panel">
+        <div class="ph">
+          <span class="pt">
+            <div class="pt-ico" style="background:var(--g-blue-l)"><svg width="14" height="14" viewBox="0 0 24 24" fill="#4285f4"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+            Live Vessel Map
+          </span>
+          <span class="pa-grey">Updated 2m ago</span>
+        </div>
+        <div class="map-wrap">
+          <div class="map-layers">
+            <div class="mlayer on">All</div>
+            <div class="mlayer">Weather</div>
+            <div class="mlayer">Lanes</div>
+          </div>
+          <svg class="map-svg" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#dbeafe"/>
+                <stop offset="100%" stop-color="#93c5fd"/>
+              </linearGradient>
+              <radialGradient id="gR"><stop offset="0%" stop-color="#ea4335" stop-opacity=".2"/><stop offset="100%" stop-color="#ea4335" stop-opacity="0"/></radialGradient>
+              <radialGradient id="gY"><stop offset="0%" stop-color="#fbbc04" stop-opacity=".2"/><stop offset="100%" stop-color="#fbbc04" stop-opacity="0"/></radialGradient>
+              <radialGradient id="gB"><stop offset="0%" stop-color="#4285f4" stop-opacity=".16"/><stop offset="100%" stop-color="#4285f4" stop-opacity="0"/></radialGradient>
+              <pattern id="gr" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0v30" fill="none" stroke="rgba(59,130,246,.07)" stroke-width=".8"/></pattern>
+            </defs>
+            <rect width="700" height="320" fill="url(#sea)"/>
+            <rect width="700" height="320" fill="url(#gr)"/>
+            <!-- land -->
+            <ellipse cx="110" cy="105" rx="90" ry="55" fill="#bbf7d0" opacity=".5"/>
+            <ellipse cx="580" cy="75" rx="72" ry="48" fill="#bbf7d0" opacity=".5"/>
+            <ellipse cx="350" cy="160" rx="52" ry="30" fill="#bbf7d0" opacity=".45"/>
+            <ellipse cx="600" cy="235" rx="80" ry="50" fill="#bbf7d0" opacity=".5"/>
+            <ellipse cx="75" cy="262" rx="62" ry="38" fill="#bbf7d0" opacity=".5"/>
+            <!-- routes -->
+            <path d="M170,115 Q260,88 350,112 Q432,132 525,98" stroke="#4285f4" stroke-width="1.8" fill="none" opacity=".55" class="route-anim"/>
+            <path d="M195,202 Q310,175 420,185 Q498,192 562,218" stroke="#4285f4" stroke-width="1.5" fill="none" opacity=".45" class="route-anim" style="animation-delay:-3s"/>
+            <path d="M152,250 Q255,218 382,198 Q472,185 552,160" stroke="#ea4335" stroke-width="2.2" fill="none" opacity=".55" class="route-anim" style="animation-delay:-1.5s"/>
+            <!-- glow halos -->
+            <ellipse cx="268" cy="106" rx="38" ry="32" fill="url(#gR)"/>
+            <ellipse cx="476" cy="114" rx="34" ry="28" fill="url(#gR)"/>
+            <ellipse cx="520" cy="175" rx="30" ry="26" fill="url(#gY)"/>
+            <ellipse cx="382" cy="218" rx="26" ry="22" fill="url(#gY)"/>
+            <ellipse cx="168" cy="118" rx="26" ry="22" fill="url(#gB)"/>
+            <!-- pulse rings -->
+            <circle cx="268" cy="106" r="9" fill="none" stroke="#ea4335" stroke-width="1.5" opacity=".7" class="pulse"/>
+            <circle cx="476" cy="114" r="9" fill="none" stroke="#ea4335" stroke-width="1.5" opacity=".7" class="pulse" style="animation-delay:-1.4s"/>
+            <!-- vessel dots -->
+            <circle cx="268" cy="106" r="7" fill="#ea4335" stroke="white" stroke-width="2.5"/>
+            <circle cx="476" cy="114" r="8" fill="#ea4335" stroke="white" stroke-width="2.5"/>
+            <circle cx="168" cy="118" r="5.5" fill="#4285f4" stroke="white" stroke-width="2"/>
+            <circle cx="380" cy="120" r="5.5" fill="#4285f4" stroke="white" stroke-width="2"/>
+            <circle cx="310" cy="185" r="5.5" fill="#34a853" stroke="white" stroke-width="2"/>
+            <circle cx="421" cy="192" r="5.5" fill="#4285f4" stroke="white" stroke-width="2"/>
+            <circle cx="520" cy="175" r="6.5" fill="#fbbc04" stroke="white" stroke-width="2"/>
+            <circle cx="200" cy="204" r="5.5" fill="#34a853" stroke="white" stroke-width="2"/>
+            <circle cx="382" cy="218" r="6.5" fill="#fbbc04" stroke="white" stroke-width="2"/>
+            <circle cx="500" cy="226" r="5.5" fill="#4285f4" stroke="white" stroke-width="2"/>
+            <circle cx="560" cy="196" r="5.5" fill="#34a853" stroke="white" stroke-width="2"/>
+            <circle cx="158" cy="248" r="5.5" fill="#4285f4" stroke="white" stroke-width="2"/>
+            <circle cx="290" cy="238" r="6.5" fill="#fbbc04" stroke="white" stroke-width="2"/>
+            <!-- vessel labels -->
+            <rect x="236" y="89" width="66" height="20" rx="5" fill="white" opacity=".93"/>
+            <rect x="236" y="89" width="66" height="20" rx="5" fill="none" stroke="rgba(234,67,53,.4)" stroke-width="1"/>
+            <text x="269" y="103" text-anchor="middle" font-size="9" fill="#c5221f" font-weight="700" font-family="Google Sans,sans-serif">ALTA MAYA · 81</text>
+            <rect x="442" y="98" width="78" height="20" rx="5" fill="white" opacity=".93"/>
+            <rect x="442" y="98" width="78" height="20" rx="5" fill="none" stroke="rgba(234,67,53,.4)" stroke-width="1"/>
+            <text x="481" y="112" text-anchor="middle" font-size="9" fill="#c5221f" font-weight="700" font-family="Google Sans,sans-serif">MSC ELENA · 91</text>
+            <rect x="456" y="182" width="78" height="20" rx="5" fill="white" opacity=".93"/>
+            <rect x="456" y="182" width="78" height="20" rx="5" fill="none" stroke="rgba(251,188,4,.55)" stroke-width="1"/>
+            <text x="495" y="196" text-anchor="middle" font-size="9" fill="#b06000" font-weight="700" font-family="Google Sans,sans-serif">PACIFIC STAR · 63</text>
+            <rect x="340" y="225" width="78" height="20" rx="5" fill="white" opacity=".93"/>
+            <rect x="340" y="225" width="78" height="20" rx="5" fill="none" stroke="rgba(251,188,4,.55)" stroke-width="1"/>
+            <text x="379" y="239" text-anchor="middle" font-size="9" fill="#b06000" font-weight="700" font-family="Google Sans,sans-serif">ORION BULK · 67</text>
+            <!-- port labels -->
+            <circle cx="178" cy="117" r="4" fill="#4285f4"/>
+            <text x="184" y="114" font-size="8.5" fill="#1a56db" font-weight="600" font-family="Google Sans,sans-serif">Shanghai</text>
+            <circle cx="525" cy="98" r="4" fill="#4285f4"/>
+            <text x="505" y="95" font-size="8.5" fill="#1a56db" font-weight="600" font-family="Google Sans,sans-serif">Rotterdam</text>
+            <circle cx="216" cy="201" r="4" fill="#34a853"/>
+            <text x="222" y="198" font-size="8.5" fill="#137333" font-weight="600" font-family="Google Sans,sans-serif">Mumbai</text>
+            <circle cx="158" cy="251" r="4" fill="#4285f4"/>
+            <text x="164" y="248" font-size="8.5" fill="#1a56db" font-weight="600" font-family="Google Sans,sans-serif">Singapore</text>
+          </svg>
+          <div class="map-legend">
+            <div class="li"><div class="ld" style="background:#ea4335"></div>Critical 80+</div>
+            <div class="li"><div class="ld" style="background:#fbbc04"></div>High 60–79</div>
+            <div class="li"><div class="ld" style="background:#4285f4"></div>Medium 40–59</div>
+            <div class="li"><div class="ld" style="background:#34a853"></div>Low 0–39</div>
+          </div>
+          <div class="mctrl">
+            <div class="mb">+</div>
+            <div class="mb">−</div>
+          </div>
+        </div>
+
+        <!-- SHIP TABS & GRID -->
+        <div class="ship-tabs" id="shipTabs">
+          <div class="st active" data-f="all">All Types</div>
+          <div class="st" data-f="container">Container</div>
+          <div class="st" data-f="tanker">Oil Tanker</div>
+          <div class="st" data-f="bulk">Bulk Carrier</div>
+          <div class="st" data-f="roro">Ro-Ro</div>
+          <div class="st" data-f="lng">LNG / LPG</div>
+          <div class="st" data-f="general">General</div>
+        </div>
+        <div class="ship-grid" id="shipGrid"></div>
+      </div>
+
+      <!-- PORT + ROUTE -->
+      <div class="bgrid2">
+        <div class="panel">
+          <div class="ph">
+            <span class="pt">
+              <div class="pt-ico" style="background:var(--g-green-l)"><svg width="13" height="13" viewBox="0 0 24 24" fill="#34a853"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+              Port Status — Top 10
+            </span>
+            <span class="pa">View all 50</span>
+          </div>
+          <table class="ptable">
+            <thead><tr><th>Port</th><th>Region</th><th>Status</th><th style="text-align:right">Ships</th></tr></thead>
+            <tbody id="portTable"></tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="ph">
+            <span class="pt">
+              <div class="pt-ico" style="background:var(--g-blue-l)"><svg width="13" height="13" viewBox="0 0 24 24" fill="#4285f4"><path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z"/></svg></div>
+              Route Risk Scores
+            </span>
+            <span class="pa">All routes</span>
+          </div>
+          <div class="rg" id="routeRisks"></div>
+          <div class="rfgrid">
+            <div class="rfc"><div class="rfl">Weather</div><div class="rfv" style="color:var(--g-red)">78</div><div class="rfbar" style="width:78%;background:var(--g-red)"></div></div>
+            <div class="rfc"><div class="rfl">Port Congestion</div><div class="rfv" style="color:#b06000">61</div><div class="rfbar" style="width:61%;background:var(--g-yellow)"></div></div>
+            <div class="rfc"><div class="rfl">Vessel Anomaly</div><div class="rfv" style="color:var(--g-blue)">44</div><div class="rfbar" style="width:44%;background:var(--g-blue)"></div></div>
+            <div class="rfc"><div class="rfl">News Sentiment</div><div class="rfv" style="color:var(--g-green)">22</div><div class="rfbar" style="width:22%;background:var(--g-green)"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- ALERTS -->
+      <div class="panel">
+        <div class="ph">
+          <span class="pt">
+            <div class="pt-ico" style="background:var(--g-red-l)"><svg width="13" height="13" viewBox="0 0 24 24" fill="#ea4335"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></div>
+            Active Alerts
+          </span>
+          <span class="pa" style="font-size:11px;color:var(--t3)">Mark all read</span>
+        </div>
+        <div class="srch">
+          <div class="si">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <input type="text" placeholder="Search alerts…" oninput="filterByText(this.value)"/>
+          </div>
+          <button class="fb on" onclick="setFilter('all',this)">All</button>
+          <button class="fb" onclick="setFilter('crit',this)">Critical</button>
+        </div>
+        <div class="al-list" id="alertList"></div>
+      </div>
+
+      <!-- AI BRIEFING -->
+      <div class="panel">
+        <div class="ph">
+          <div class="ai-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            AI Briefing — Claude
+          </div>
+          <span class="pa" onclick="regenerate()">↺ Regenerate</span>
+        </div>
+        <div class="ai-panel">
+          <div class="ai-rep" id="aiRep">
+            <strong>Daily Maritime Risk Summary — April 9, 2026</strong><br><br>
+            <span class="hi-r">🔴 High priority:</span> Tropical storm in the Arabian Sea elevates risk on India–Europe corridors. Wave heights 4.2–5.8m along 12 waypoints; 3 vessels flagged for anomalous speed reduction.<br><br>
+            <span class="hi-y">🟡 Port watch:</span> Shanghai congestion remains Severe following berth maintenance at Yangshan Phase IV. ETA delays averaging 18–22h expected through April 12.<br><br>
+            <span class="hi-g">🟢 Recommended:</span> Consider Cape of Good Hope diversion for MSC Elena &amp; Alta Maya — sustained Houthi threat in Red Sea corridor (score: 91).
+          </div>
+          <div class="ai-acts">
+            <button class="aibtn aibtn-p" onclick="askAI()">Ask AI ↗</button>
+            <button class="aibtn aibtn-s">Export PDF</button>
+            <button class="aibtn aibtn-s">Email</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script>
+const RC=(r)=>r>=80?'#ea4335':r>=60?'#b06000':r>=40?'#4285f4':'#137333';
+const RL=(r)=>r>=80?'Critical':r>=60?'High':r>=40?'Medium':'Low';
+
+const ships=[
+  {t:'container',l:'Container',c:'#4285f4',bg:'rgba(66,133,244,.11)',v:['MSC Elena','OOCL Pioneer','Evergreen Jade','CMA Titan','Maersk Oslo','HMM Korea'],r:[91,42,28,65,38,71]},
+  {t:'tanker',l:'Oil Tanker',c:'#ea4335',bg:'rgba(234,67,53,.11)',v:['Alta Maya','Gulf Voyager','Crude Pioneer','VLCC Athena'],r:[81,55,47,33]},
+  {t:'bulk',l:'Bulk Carrier',c:'#fbbc04',bg:'rgba(251,188,4,.11)',v:['Orion Bulk','Pacific Star','Capesize Atlas','Panamax Quest'],r:[67,63,41,29]},
+  {t:'roro',l:'Ro-Ro',c:'#a142f4',bg:'rgba(161,66,244,.11)',v:['Auto Carrier Nova','Wallenius Titan'],r:[31,22]},
+  {t:'lng',l:'LNG/LPG',c:'#34a853',bg:'rgba(52,168,83,.11)',v:['Q-Flex Aurora','LNG Horizon','LPG Ariel'],r:[44,38,26]},
+  {t:'general',l:'General',c:'#fa7b17',bg:'rgba(250,123,23,.11)',v:['MPP Endeavour','Reefer Star','Breakbulk King'],r:[24,19,31]},
+];
+const svgs={container:'M20 21H4l2-5h12l2 5zM12 3L6.5 9H9v5h6V9h2.5L12 3z',tanker:'M3 17l2-7h14l2 7H3zm5-9V5h8v3H8z',bulk:'M3 17l2-7h14l2 7H3zm5-9V5h8v3H8z',roro:'M20 8H4l-2 8v2h20v-2L20 8zm-8 6H6v-4h6v4zm8 0h-6v-4h6v4z',lng:'M12 2l3 5h3l1 5H5l1-5h3L12 2zm-3 10v5h6v-5H9z',general:'M20 21H4l2-5h12l2 5zM5 14l2-5h10l2 5H5z'};
+
+function renderShips(f){
+  let all=[];
+  if(!f||f==='all') ships.forEach(g=>g.v.forEach((v,i)=>all.push({n:v,l:g.l,c:g.c,bg:g.bg,r:g.r[i],t:g.t})));
+  else{const g=ships.find(x=>x.t===f);if(g)g.v.forEach((v,i)=>all.push({n:v,l:g.l,c:g.c,bg:g.bg,r:g.r[i],t:g.t}));}
+  all=all.slice(0,12);
+  document.getElementById('shipGrid').innerHTML=all.map(s=>`
+  <div class="shc" onclick="this.classList.toggle('sel')">
+    <div class="sh-ico" style="background:${s.bg}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="${s.c}"><path d="${svgs[s.t]}"/></svg>
+    </div>
+    <div class="sh-name">${s.n}</div>
+    <div class="sh-type">${s.l}</div>
+    <div class="sh-risk" style="color:${RC(s.r)}">
+      <div class="rpip" style="background:${RC(s.r)}"></div>
+      ${RL(s.r)} · ${s.r}
+    </div>
+  </div>`).join('');
+}
+document.getElementById('shipTabs').addEventListener('click',e=>{
+  const t=e.target.closest('.st');if(!t)return;
+  document.querySelectorAll('.st').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');renderShips(t.dataset.f);
+});
+renderShips('all');
+
+// ALERTS
+const alerts=[
+  {sev:5,c:'#ea4335',bc:'rgba(234,67,53,.1)',cc:'#c5221f',bc2:'rgba(234,67,53,.25)',type:'WEATHER',desc:'Cyclone forming — Arabian Sea corridors severely affected',reg:'Arabian Sea',score:91,age:'2m ago',u:true},
+  {sev:5,c:'#ea4335',bc:'rgba(234,67,53,.1)',cc:'#c5221f',bc2:'rgba(234,67,53,.25)',type:'PIRACY',desc:'MSC Elena & Alta Maya: Houthi threat — Red Sea immediate reroute',reg:'Red Sea / Bab-el-Mandeb',score:88,age:'8m ago',u:true},
+  {sev:4,c:'#fbbc04',bc:'rgba(251,188,4,.1)',cc:'#b06000',bc2:'rgba(251,188,4,.35)',type:'CONGESTION',desc:'Shanghai port reaching Severe — 18h+ berth delay expected',reg:'Shanghai, China',score:82,age:'15m ago',u:true},
+  {sev:4,c:'#fbbc04',bc:'rgba(251,188,4,.1)',cc:'#b06000',bc2:'rgba(251,188,4,.35)',type:'ANOMALY',desc:'Pacific Star: 40% speed deviation, 34° off expected bearing',reg:'Indian Ocean',score:74,age:'22m ago',u:false},
+  {sev:3,c:'#fbbc04',bc:'rgba(251,188,4,.1)',cc:'#b06000',bc2:'rgba(251,188,4,.35)',type:'CONGESTION',desc:'Rotterdam berths 7–9 closed for scheduled maintenance',reg:'Rotterdam, Netherlands',score:65,age:'1h ago',u:false},
+  {sev:3,c:'#4285f4',bc:'rgba(66,133,244,.1)',cc:'#1a56db',bc2:'rgba(66,133,244,.25)',type:'NEWS',desc:'Suez Canal fee increase announced — route cost model updated',reg:'Egypt / Suez Canal',score:61,age:'2h ago',u:false},
+  {sev:2,c:'#4285f4',bc:'rgba(66,133,244,.1)',cc:'#1a56db',bc2:'rgba(66,133,244,.25)',type:'WEATHER',desc:'Strong swell forecast Bay of Biscay — monitor passage timing',reg:'Atlantic / Bay of Biscay',score:52,age:'3h ago',u:false},
+  {sev:1,c:'#34a853',bc:'rgba(52,168,83,.1)',cc:'#137333',bc2:'rgba(52,168,83,.25)',type:'PORT',desc:'Singapore additional berths opened — congestion easing to Medium',reg:'Singapore',score:28,age:'4h ago',u:false},
+];
+
+function renderAlerts(list){
+  document.getElementById('alertList').innerHTML=list.length?list.map(a=>`
+  <div class="ai${a.u?' unread':''}">
+    <div class="adot" style="background:${a.c}"></div>
+    <div class="ab">
+      <div class="at-row">
+        <span class="atype" style="color:${a.cc}">${a.type}</span>
+        <span class="achip" style="background:${a.bc};color:${a.cc};border-color:${a.bc2}">SEV ${a.sev}</span>
+      </div>
+      <div class="adesc">${a.desc}</div>
+      <div class="ameta">${a.reg} · ${a.age}</div>
+    </div>
+    <div class="ascore" style="color:${a.c}">${a.score}</div>
+  </div>`).join(''):'<div class="empty">No alerts match</div>';
+}
+renderAlerts(alerts);
+
+let curF='all';
+function setFilter(f,btn){
+  curF=f;
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');applyFilters();
+}
+function filterByText(){applyFilters();}
+function applyFilters(){
+  const q=document.querySelector('.si input').value.toLowerCase();
+  let list=alerts;
+  if(curF==='crit')list=list.filter(a=>a.sev>=4);
+  if(q)list=list.filter(a=>a.desc.toLowerCase().includes(q)||a.reg.toLowerCase().includes(q)||a.type.toLowerCase().includes(q));
+  renderAlerts(list);
+}
+
+// PORTS
+const ports=[
+  {n:'Shanghai',r:'Asia-Pacific',c:'Severe',s:312},
+  {n:'Singapore',r:'Asia-Pacific',c:'High',s:198},
+  {n:'Rotterdam',r:'Europe',c:'High',s:176},
+  {n:'Los Angeles',r:'Americas',c:'Medium',s:134},
+  {n:'Dubai',r:'Middle East',c:'Medium',s:88},
+  {n:'Hamburg',r:'Europe',c:'Low',s:62},
+  {n:'Mumbai',r:'South Asia',c:'Medium',s:71},
+  {n:'Busan',r:'Asia-Pacific',c:'Low',s:45},
+  {n:'Antwerp',r:'Europe',c:'Low',s:38},
+  {n:'New York',r:'Americas',c:'Low',s:29},
+];
+const cls={Severe:'cs',High:'ch',Medium:'cm',Low:'cl'};
+document.getElementById('portTable').innerHTML=ports.map(p=>`
+<tr>
+  <td>${p.n}</td>
+  <td style="color:var(--t2)">${p.r}</td>
+  <td><span class="cp ${cls[p.c]}">${p.c}</span></td>
+  <td style="font-weight:600;text-align:right;font-variant-numeric:tabular-nums">${p.s}</td>
+</tr>`).join('');
+
+// ROUTES
+const routes=[
+  {f:'Shanghai',t:'Rotterdam',r:77,type:'Container'},
+  {f:'Mumbai',t:'Hamburg',r:91,type:'Tanker'},
+  {f:'Singapore',t:'Los Angeles',r:44,type:'Container'},
+  {f:'Dubai',t:'New York',r:62,type:'Bulk'},
+  {f:'Busan',t:'Seattle',r:31,type:'Container'},
+];
+document.getElementById('routeRisks').innerHTML=routes.map(x=>{
+  const c=RC(x.r),l=RL(x.r);
+  return `<div class="rrow">
+    <div style="flex:1">
+      <div class="rp">${x.f} → ${x.t}</div>
+      <div class="rsub">${x.type} route</div>
+      <div class="gtrack"><div class="gfill" style="width:${x.r}%;background:${c}"></div></div>
+    </div>
+    <div>
+      <div class="gscore" style="color:${c}">${x.r}</div>
+      <div class="glab">${l}</div>
+    </div>
+  </div>`;
+}).join('');
+
+// MAP LAYERS
+document.querySelectorAll('.mlayer').forEach(el=>el.addEventListener('click',()=>el.classList.toggle('on')));
+
+// AI
+function regenerate(){
+  const el=document.getElementById('aiRep');
+  el.innerHTML='<span style="color:var(--t3)">Generating briefing from Claude…</span>';
+  setTimeout(()=>{
+    el.innerHTML=`<strong>Daily Maritime Risk Summary — April 9, 2026</strong><br><br>
+    <span class="hi-r">🔴 High priority:</span> Tropical storm in the Arabian Sea elevates risk on India–Europe corridors. Wave heights 4.2–5.8m along 12 waypoints; 3 vessels flagged for anomalous speed reduction.<br><br>
+    <span class="hi-y">🟡 Port watch:</span> Shanghai congestion remains Severe following berth maintenance at Yangshan Phase IV. ETA delays averaging 18–22h expected through April 12.<br><br>
+    <span class="hi-g">🟢 Recommended:</span> Consider Cape of Good Hope diversion for MSC Elena &amp; Alta Maya — sustained Houthi threat in Red Sea corridor (score: 91).`;
+  },1600);
+}
+
+async function askAI(){
+  const q='Is the Red Sea safe this week? What does ShipGuard recommend?';
+  const el=document.getElementById('aiRep');
+  el.innerHTML=`<strong>Q: ${q}</strong><br><br><span style="color:var(--t3)">Asking Claude…</span>`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:350,system:'You are ShipGuard maritime AI. Answer concisely in 3-4 sentences for a dashboard.',messages:[{role:'user',content:q}]})});
+    const d=await res.json();
+    el.innerHTML=`<strong>AI: ${q}</strong><br><br>${(d.content?.[0]?.text||'No response').replace(/\n/g,'<br>')}`;
+  }catch{
+    el.innerHTML=`<strong>AI: ${q}</strong><br><br>
+    <span class="hi-r">⚠ Red Sea remains CRITICAL (score 88–91).</span> Houthi maritime threats persist along Bab-el-Mandeb with 4 incidents in 7 days. ShipGuard recommends Cape of Good Hope diversion (+14 days, +$320k fuel). Alternative: Singapore → Cape Town → Rotterdam (risk: 31).`;
+  }
+}
+
+// GLOBAL SEARCH
+document.getElementById('gSearch').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  if(!q){renderAlerts(alerts);return;}
+  renderAlerts(alerts.filter(a=>a.desc.toLowerCase().includes(q)||a.reg.toLowerCase().includes(q)||a.type.toLowerCase().includes(q)));
+});
+</script>
+</body>
+</html>
